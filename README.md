@@ -60,4 +60,3 @@ Yml.encrypt 'password', 'security.pub'
 # You can store this value in your .yml file
 ```
 You can read more about encryption [here](https://www.npmjs.com/package/ursa).
-

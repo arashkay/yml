@@ -13,6 +13,9 @@
     "type": "git",
     "url": "git@github.com:tectual/yml.git"
   },
+  "bugs": {
+    "url": "https://github.com/tectual/yml/issues"
+  },
   "devDependencies": {
     "coveralls": "2.10.0",
     "mocha-lcov-reporter": "0.0.2",

@@ -65,10 +65,12 @@
       if (options == null) {
         options = {};
       }
-      if ((env != null) && _.isString(env)) {
-        options.env = env;
-      } else {
-        options = env;
+      if (env != null) {
+        if (_.isString(env)) {
+          options.env = env;
+        } else {
+          options = env;
+        }
       }
       loader = new YamlLoader(path, options);
       return loader.load();

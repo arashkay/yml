@@ -1,6 +1,6 @@
 {
   "name": "yml",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Read Yaml files based on NODE_ENV or passed env + support for encryption",
   "main": "build/main",
   "dependencies": {

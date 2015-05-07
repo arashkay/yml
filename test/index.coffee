@@ -18,7 +18,7 @@ describe 'Yml', ->
     configs.days.should.be.instanceof Array
 
   it "should load config based on env", ->
-    configs = Yml.load path, 'production', { key: key }
+    configs = Yml.load path, 'production'
     configs.password.should.be.equal 'secret'
 
   it "should salt strings", ->

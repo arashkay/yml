@@ -38,10 +38,11 @@ class YamlLoader
 module.exports = {
   
   load: (path, env, options={}) ->
-    if env? && _.isString env
-      options.env = env
-    else
-      options = env
+    if env?
+      (if _.isString env
+        options.env = env
+      else
+        options = env)
     loader = new YamlLoader path, options
     loader.load()
   

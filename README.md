@@ -1,6 +1,12 @@
-# yml
+yml
+======
 
-## Load a yaml file
+[![Build Status](https://travis-ci.org/tectual/yml.svg)](https://travis-ci.org/tectual/yml)
+[![npm version](https://badge.fury.io/js/yml.svg)](http://badge.fury.io/js/yml)
+[![Coverage Status](https://coveralls.io/repos/tectual/yml/badge.svg?branch=master)](https://coveralls.io/r/tectual/yml?branch=master)
+
+
+## Load a yaml file in Node.js
 
 It can load a yaml file based on NODE_ENV or passed env (or using development as default). It uses [ursa](https://www.npmjs.com/package/ursa) for encryption. 
 

@@ -35,7 +35,7 @@ configs = Yml.load 'config.yml', 'production', { key: 'security.key.pem' }
 
 If you have defined **NODE_ENV** in your system, you dont need to pass the env parameter.
 ```coffee
-# if RAILS_ENV = 'production' is set in server, these lines have same result
+# if NODE_ENV = 'production' is set in server, these lines have same result
 configs = Yml.load 'config.yml', { key: 'security.key.pem' }
 configs = Yml.load 'config.yml', 'production', { key: 'security.key.pem' }
 # { username: 'Admin', password: 'decrypted_pass', days: ['Monday', 'Tuesday', 'Friday'], devices: { android: true, ios: false } }

@@ -5,9 +5,11 @@ Yml = require '../build/main'
 
 describe 'Yml', ->
   
-  path = __dirname+'/config.yml'
-  key  = __dirname+'/security.key.pem'
-  cert = __dirname+'/security.pub'
+  path       = __dirname+'/config.yml'
+  path_noenv = __dirname+'/config-noenv.yml'
+  path_nodef = __dirname+'/config-nodef.yml'
+  key        = __dirname+'/security.key.pem'
+  cert       = __dirname+'/security.pub'
 
   it "should load config and deep merge defaults with env", ->
     configs = Yml.load path, { key: key }
@@ -27,3 +29,11 @@ describe 'Yml', ->
     @key_file = ursa.createPrivateKey fs.readFileSync key
     decrypted = @key_file.decrypt salt, 'base64', 'utf8'
     decrypted.should.be.equal phrase
+
+  it "should load config with no env", ->
+    configs = Yml.load path_noenv
+    configs.should.not.be.empty
+
+  it "should load config with no default with correct env", ->
+    configs = Yml.load path_nodef, 'production'
+    configs.password.should.be.equal 'secret'

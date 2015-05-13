@@ -30,6 +30,9 @@
       defaults = data["default"] || {};
       env = data[this.env] || {};
       configs = extend(true, extend(true, {}, defaults), env);
+      if (_.isEmpty(configs)) {
+        configs = data;
+      }
       return this.configs = this.parse(configs);
     };
 
@@ -47,6 +50,9 @@
         return obj;
       } else {
         if (_.isString(obj) && /decrypt\(.+\)/.exec(obj)) {
+          if (this.key_file == null) {
+            throw new Error('Private key for decryption is missing...');
+          }
           matches = /decrypt\((.+)\)/.exec(obj);
           return this.key_file.decrypt(matches[1], 'base64', 'utf8');
         } else {

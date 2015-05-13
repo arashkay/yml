@@ -19,6 +19,7 @@ class YamlLoader
     defaults = data.default || {}
     env = data[@env] || {}
     configs = extend true, extend(true, {}, defaults), env
+    configs = data if _.isEmpty configs
     @configs = @parse configs
 
   parse: (obj) ->
@@ -30,6 +31,7 @@ class YamlLoader
       obj 
     else
       if _.isString(obj) && /decrypt\(.+\)/.exec(obj)
+        throw new Error 'Private key for decryption is missing...' unless @key_file?
         matches = /decrypt\((.+)\)/.exec(obj)
         @key_file.decrypt matches[1], 'base64', 'utf8'
       else

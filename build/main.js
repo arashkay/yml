@@ -1,7 +1,7 @@
 (function() {
-  var YamlLoader, _, extend, fs, ursa, yaml;
+  var YamlLoader, _, crypto, extend, fs, rsa, yaml;
 
-  ursa = require('ursa');
+  crypto = require('crypto');
 
   fs = require('fs');
 
@@ -11,6 +11,21 @@
 
   extend = require('node.extend');
 
+  rsa = {
+    decrypt: function(str, private_key) {
+      var buffer, decrypted;
+      buffer = new Buffer(str, 'base64');
+      decrypted = crypto.privateDecrypt(private_key, buffer);
+      return decrypted.toString('utf8');
+    },
+    encrypt: function(str, public_key) {
+      var buffer, encrypted;
+      buffer = new Buffer(str);
+      encrypted = crypto.publicEncrypt(public_key, buffer);
+      return encrypted.toString('base64');
+    }
+  };
+
   YamlLoader = (function() {
     function YamlLoader(path1, options1) {
       this.path = path1;
@@ -19,7 +34,7 @@
         throw new Error('Missing path parameter.');
       }
       if (this.options.key != null) {
-        this.key_file = ursa.createPrivateKey(fs.readFileSync(this.options.key));
+        this.key_file = fs.readFileSync(this.options.key);
       }
       this.env = this.options.env || process.env.NODE_ENV || 'development';
     }
@@ -54,7 +69,7 @@
             throw new Error('Private key for decryption is missing...');
           }
           matches = /decrypt\((.+)\)/.exec(obj);
-          return this.key_file.decrypt(matches[1], 'base64', 'utf8');
+          return rsa.decrypt(matches[1], this.key_file);
         } else {
           return obj;
         }
@@ -82,9 +97,7 @@
       return loader.load();
     },
     encrypt: function(phrase, public_key) {
-      var crt;
-      crt = ursa.createPublicKey(fs.readFileSync(public_key));
-      return crt.encrypt(phrase, 'utf8', 'base64');
+      return rsa.encrypt(phrase, fs.readFileSync(public_key));
     }
   };
 

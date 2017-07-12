@@ -1,4 +1,4 @@
-ursa = require 'ursa'
+crypto = require 'crypto'
 fs = require 'fs'
 yaml = require 'js-yaml'
 _ = require 'lodash'
@@ -6,15 +6,27 @@ extend = require 'node.extend'
 
 # ## Yaml Config Reader (with ENV and Securing values support)
 #
+
+rsa =
+  decrypt: (str, private_key) ->
+    buffer = new Buffer str, 'base64'
+    decrypted = crypto.privateDecrypt private_key, buffer
+    decrypted.toString 'utf8'
+
+  encrypt: (str, public_key) ->
+    buffer = new Buffer str
+    encrypted = crypto.publicEncrypt public_key, buffer
+    encrypted.toString 'base64'
+
 class YamlLoader
 
   constructor: (@path, @options) ->
     throw new Error 'Missing path parameter.' unless @path?
     if @options.key?
-      @key_file = ursa.createPrivateKey fs.readFileSync @options.key
+      @key_file = fs.readFileSync @options.key
     @env = @options.env || process.env.NODE_ENV || 'development'
-  
-  load: -> 
+
+  load: ->
     data = yaml.safeLoad fs.readFileSync(@path, 'utf8')
     defaults = data.default || {}
     env = data[@env] || {}
@@ -28,17 +40,17 @@ class YamlLoader
       _.map obj, (value) -> _this.parse value
     else if _.isObject(obj)
       _.each obj, (value, key) -> obj[key] = _this.parse value
-      obj 
+      obj
     else
       if _.isString(obj) && /decrypt\(.+\)/.exec(obj)
         throw new Error 'Private key for decryption is missing...' unless @key_file?
         matches = /decrypt\((.+)\)/.exec(obj)
-        @key_file.decrypt matches[1], 'base64', 'utf8'
+        rsa.decrypt matches[1], @key_file
       else
-        obj 
+        obj
 
 module.exports = {
-  
+
   load: (path, env, options={}) ->
     if env?
       (if _.isString env
@@ -47,9 +59,8 @@ module.exports = {
         options = env)
     loader = new YamlLoader path, options
     loader.load()
-  
+
   encrypt: (phrase, public_key) ->
-    crt = ursa.createPublicKey fs.readFileSync public_key
-    crt.encrypt phrase, 'utf8', 'base64'
+    rsa.encrypt phrase, fs.readFileSync public_key
 }
 

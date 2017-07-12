@@ -1,5 +1,5 @@
 should = require('chai').should()
-ursa = require 'ursa'
+crypto = require 'crypto'
 fs = require 'fs'
 Yml = require '../build/main'
 
@@ -26,8 +26,10 @@ describe 'Yml', ->
   it "should salt strings", ->
     phrase = 'password'
     salt = Yml.encrypt phrase, cert
-    @key_file = ursa.createPrivateKey fs.readFileSync key
-    decrypted = @key_file.decrypt salt, 'base64', 'utf8'
+    private_key = fs.readFileSync key
+    buffer = new Buffer salt, 'base64'
+    decrypted = crypto.privateDecrypt private_key, buffer
+    decrypted = decrypted.toString 'utf8'
     decrypted.should.be.equal phrase
 
   it "should load config with no env", ->
